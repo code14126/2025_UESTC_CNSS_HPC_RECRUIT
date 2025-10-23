@@ -141,7 +141,7 @@ cudaMallocHost(&h_C, M*K*sizeof(float));
 
 ## **四、初期优化效果不佳的原因分析**
 
-**![](C:\Users\code\Pictures\Screenshots\屏幕截图 2025-10-17 204306.png)**
+**<img src="C:\Users\code\Pictures\Screenshots\屏幕截图 2025-10-17 204306.png" style="zoom: 33%;" />**
 
 在`M=8192、N=6144、K=4096`场景下测试发现，优化后程序平均耗时反而增加约 50ms，未达预期。
 
@@ -169,25 +169,27 @@ cuBLAS库的优化做得很极致，平均只需要50~60ms，去网上搜索并�
 
 [Fast CUDA SGEMM from Scratch](https://github.com/siboehm/SGEMM_CUDA)
 
-[NVIDIA_SGEMM_PRACTICE](https://github.com/wangzyon/NVIDIA_SGEMM_PRACTICE)
+[NVIDIA_SGEMM_PRACTICE](https://github.com/wangzyon/NVIDIA_SGEMM_PRACTICE)（我参考了他的代码，如下左图）
 
-<img src="C:\Users\code\AppData\Roaming\Typora\typora-user-images\image-20251022205305007.png" alt="image-20251022205305007" style="zoom: 67%;" />
+<img src="C:\Users\code\Pictures\Screenshots\屏幕截图 2025-10-22 205231.png" alt="屏幕截图 2025-10-22 205231" style="zoom: 25%;" /><img src="C:\Users\code\Pictures\Screenshots\屏幕截图 2025-10-22 205300.png" alt="屏幕截图 2025-10-22 205300" style="zoom: 25%;" />
 
+最终优化效果如下图，性能达到cuBLAS库（平均55ms）的78.6%左右，但依旧报错：核函数在执行过程中仍然有越界访问。
 
+```java
+CUDA Error: an illegal memory access was encountered (matrix_multiply_kernel7.cu:232)
+```
 
-
-
-
-
-
-
-
+<img src="C:\Users\code\Pictures\Screenshots\屏幕截图 2025-10-22 224838.png" style="zoom: 33%;" />
 
 
 
-## **附录：执行时间波动现象分析：为何后续执行一次比一次短**
+#### [源码](https://github.com/code14126/2025_UESTC_CNSS_HPC_RECRUIT/blob/main/matrix_multiply_CUDA/matrix_multiply_kernel7.cu)
 
-**<img src="C:\Users\code\Pictures\Screenshots\屏幕截图 2025-10-17 202846.png" style="zoom:75%;" />**
+
+
+## **附：执行时间波动现象分析：为何后续执行一次比一次短**
+
+**<img src="C:\Users\code\Pictures\Screenshots\屏幕截图 2025-10-17 202846.png" style="zoom: 33%;" />**
 
 在多次测试中发现，同一程序连续执行时，第一次耗时显著高于后续执行（例如首次 104ms，第二次 42ms，第三次 38ms）。这种 “逐渐加速” 的现象并非偶然，而是由 CUDA 运行时机制、硬件缓存特性共同导致的：
 
