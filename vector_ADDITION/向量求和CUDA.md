@@ -2,6 +2,8 @@
 
 ## 一、项目背景与需求
 
+源码见[github](https://github.com/code14126/2025_UESTC_CNSS_HPC_RECRUIT/tree/main/vector_ADDITION)
+
 本项目要求在 GPU 上实现向量逐元素求和功能，输入为两个 32 位浮点数向量，输出为求和结果向量。
 
 - 向量长度`N≤100,000,000`，输入向量 A 和 B 长度相同；
